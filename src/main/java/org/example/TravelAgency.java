@@ -2,12 +2,16 @@ package org.example;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class TravelAgency {
-    enum vehicleType{BOAT,BUS,PLANE,TEXI}
-    static Map<vehicleType, Integer> VehiclesStock = new HashMap<>(vehicleType.values().length);
+    enum vehicleType {BOAT, BUS, PLANE, TEXI}
+
+    static Map<vehicleType, Integer> vehiclesStock = new HashMap<>(vehicleType.values().length);
     private static TravelAgency instance;
-    public static TravelAgency getInstance(){
-        if(instance==null){
+
+    public static TravelAgency getInstance() {
+        if (instance == null) {
             instance = new TravelAgency();
         }
         generateMapOfVeichle();
@@ -16,20 +20,20 @@ public class TravelAgency {
 
     private static void generateMapOfVeichle() {
         for (int i = 0; i < vehicleType.values().length; i++) {
-            countOfVehicle.put(vehicleType.BOAT,3);
-            countOfVehicle.put(vehicleType.BUS,4);
-            countOfVehicle.put(vehicleType.TEXI,8);
-            countOfVehicle.put(vehicleType.PLANE,1);
+            vehiclesStock.put(vehicleType.BOAT, 3);
+            vehiclesStock.put(vehicleType.BUS, 4);
+            vehiclesStock.put(vehicleType.TEXI, 8);
+            vehiclesStock.put(vehicleType.PLANE, 1);
         }
 
     }
 
-    private TravelAgency(){
+    private TravelAgency() {
     }
 
     public class vehicleFactory {
-        public Vehicle createVehicle(vehicleType type){
-            switch (type){
+        public Vehicle createVehicle(vehicleType type) {
+            switch (type) {
                 case BOAT:
                     return new Boat();
                 case BUS:
@@ -40,30 +44,48 @@ public class TravelAgency {
                     return new Taxi();
                 default:
                     throw new IllegalArgumentException(String.format("Vehicle type not supported: %s", type));
+
             }
         }
-    }
 
 
-   public void assignPessengers(Passenger passenger){
-       if(isAvailable(passenger.getFavorite()))
-       {
-           useVeicle(vehicleType);
-       }
-       else useVehicleRandomly();
-   }
-    private void useVehicleRandomly() {
+        public void assignPessengers(Passenger passenger) {
+            if (isAvailable(passenger.getFavorite())) {
+                createVehicle(passenger.getFavorite());
+                updateMap(passenger.getFavorite());
+            } else useVehicleRandomly();
 
-    }
-    private void useVeicle() {
+        }
 
-    }
-    private boolean isAvailable(vehicleType favorite){
-        if (VehiclesStock.get(favorite) > 0)
-            return true;
-        return false;
+        private void updateMap(vehicleType favorite) {
+            vehiclesStock.put(favorite, vehiclesStock.get(favorite) - 1);
+        }
+
+
+        private void useVehicleRandomly() {
+            vehicleType randomTypeVehicle =  getRandomTypeVehicle();
+           if(isAvailable(randomTypeVehicle))
+           {
+               createVehicle(randomTypeVehicle);
+
+
+           }
+
+
+        }
+
+        private vehicleType getRandomTypeVehicle() {
+            vehicleType[] values = vehicleType.values();
+            int index= ThreadLocalRandom.current().nextInt(0,values.length);
+            return values[index];
+        }
+
+        private boolean isAvailable(vehicleType favorite) {
+            if (vehiclesStock.get(favorite) > 0)
+                return true;
+            return false;
         }
     }
 
-
 }
+

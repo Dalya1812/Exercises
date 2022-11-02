@@ -4,8 +4,11 @@ public class Passenger {
     String name;
     Vehicle favorite;
 
-    public Vehicle getFavorite() {
+    public TravelAgency.vehicleType getFavorite() {
         return favorite;
+    }
+    public String getName() {
+        return name;
     }
 
 
