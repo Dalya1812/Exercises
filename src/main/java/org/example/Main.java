@@ -1,7 +1,16 @@
 package org.example;
 
+import java.util.ArrayList;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        TravelAgency.getInstance();
+        ArrayList<Passenger> passengers=new ArrayList<>(10);
+
+
+
+
+
     }
+
 }
