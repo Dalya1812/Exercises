@@ -1,10 +1,9 @@
 package week3.day2.creationalPatterns;
-
 public class Passenger {
     String name;
-    TravelAgency.vehicleType favorite;
+    AbsVeichle favorite;
 
-    public TravelAgency.vehicleType getFavorite() {
+    public AbsVeichle getFavorite() {
         return favorite;
     }
     public String getName() {

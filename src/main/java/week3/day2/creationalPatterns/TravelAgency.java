@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static week3.day2.creationalPatterns.TravelAgency.vehicleType.*;
+
 public class TravelAgency {
 
     private static TravelAgency instance;
-    public static HashMap<vehicleType, Integer> vehiclesStock = new HashMap<>();
+    public static HashMap<Object, Integer> vehiclesStock = new HashMap<Object, Integer>();
 
     enum vehicleType {BOAT, BUS, PLANE, TEXI;
 
@@ -23,12 +25,11 @@ public class TravelAgency {
         }
         return instance;
     }
-
     private static void generateMapOfVeichle() {
-        vehiclesStock.put(vehicleType.BOAT, 3);
-        vehiclesStock.put(vehicleType.BUS, 4);
+        vehiclesStock.put(BOAT, 3);
+        vehiclesStock.put(BUS, 4);
         vehiclesStock.put(vehicleType.TEXI, 8);
-        vehiclesStock.put(vehicleType.PLANE, 1);
+        vehiclesStock.put(PLANE, 1);
         System.out.println(vehiclesStock);
     }
 
@@ -37,15 +38,15 @@ public class TravelAgency {
 
     }
 
-    public AbsVeichle createVehicle(vehicleType type) {
+    public AbsVeichle createVehicle(AbsVeichle type) {
         switch (type) {
-            case BOAT:
+            case Boat ignored:
                 return new Boat();
-            case BUS:
+            case Bus ignored:
                 return new Bus();
-            case PLANE:
+            case Plane ignored:
                 return new Plane();
-            case TEXI:
+            case Taxi ignored:
                 return new Taxi();
             default:
                 throw new IllegalArgumentException(String.format("Vehicle type not supported: %s", type));
@@ -54,25 +55,36 @@ public class TravelAgency {
     }
 
 
-    public void updateMap(vehicleType favorite) {
+    public void updateMap(AbsVeichle favorite) {
         vehiclesStock.put(favorite, vehiclesStock.get(favorite) - 1);
     }
 
     public void useVehicleRandomly() {
-        vehicleType randomTypeVehicle = getRandomTypeVehicle();
+        AbsVeichle randomTypeVehicle = getRandomTypeVehicle();
         if (isAvailable(randomTypeVehicle)) {
             createVehicle(randomTypeVehicle);
         }
 
     }
 
-    public vehicleType getRandomTypeVehicle() {
-        vehicleType[] values = vehicleType.values();
-        int index = ThreadLocalRandom.current().nextInt(0, values.length);
-        return values[index];
+    public AbsVeichle getRandomTypeVehicle() {
+        int index = ThreadLocalRandom.current().nextInt(0, 3);
+        switch (index) {
+            case 0:
+                return new Boat();
+            case 1:
+                return new Bus();
+            case 2:
+                return new Plane();
+            case 3:
+                return new Taxi();
+            default:
+                throw new IllegalArgumentException(String.format("Vehicle type not supported:"));
+
+        }
     }
 
-    public boolean isAvailable(vehicleType favorite) {
+    public boolean isAvailable(AbsVeichle favorite) {
         System.out.println(vehiclesStock.get(favorite));
         if (vehiclesStock.get(favorite) > 0)
             return true;
@@ -80,22 +92,7 @@ public class TravelAgency {
     }
 
 
-    public AbsVeichle creatVeichleUsingType(TravelAgency.vehicleType type) {
-        switch (type) {
-            case BOAT:
-                return new Boat();
-            case BUS:
-                return new Bus();
-            case PLANE:
-                return new Plane();
-            case TEXI:
-                return new Taxi();
-            default:
-                throw new IllegalArgumentException(String.format("Vehicle type not supported: %s", type));
 
-        }
-
-    }
 
     public void assignPessengers(Passenger passenger) {
         if (isAvailable(passenger.getFavorite())) {
