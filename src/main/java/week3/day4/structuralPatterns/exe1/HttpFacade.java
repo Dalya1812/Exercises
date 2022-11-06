@@ -10,6 +10,8 @@ import org.apache.http.util.EntityUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+
 public class HttpFacade {
     static CloseableHttpClient httpClient = HttpClients.createDefault();
     int status;
@@ -33,43 +35,40 @@ public class HttpFacade {
     public  Response post(String url, String param1, String param2) {
         System.out.print("Post request:");
         HttpPost httpPost = new HttpPost(url);
-        Response result = null;
-        List<NameValuePair> urlParameters = new ArrayList<>();
-        urlParameters.add(new BasicNameValuePair("email", param1));
-        urlParameters.add(new BasicNameValuePair("password", param2));
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("email", param1));
+        parameters.add(new BasicNameValuePair("password", param2));
         try {
-            httpPost.setEntity(new UrlEncodedFormEntity(urlParameters));
+            httpPost.setEntity(new UrlEncodedFormEntity(parameters));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
         return responseFromHttp(httpPost);
     }
 
-
     public  Response put(String url,String param1, String param2) {
         System.out.print("Put request:");
         HttpPut put = new HttpPut(url);
-        Response result = null;
-        List<NameValuePair> urlParameters = new ArrayList<>();
-        urlParameters.add(new BasicNameValuePair("email", param1));
-        urlParameters.add(new BasicNameValuePair("password", param2));
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("email", param1));
+        parameters.add(new BasicNameValuePair("password", param2));
         try {
-            put.setEntity(new UrlEncodedFormEntity(urlParameters));
+            put.setEntity(new UrlEncodedFormEntity(parameters));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+
         return responseFromHttp(put);
     }
 
     public  Response patch(String url,String param1, String param2) {
         System.out.print("Patch request:");
         HttpPatch patch = new HttpPatch(url);
-        Response result = null;
-        List<NameValuePair> urlParameters = new ArrayList<>();
-        urlParameters.add(new BasicNameValuePair("email", param1));
-        urlParameters.add(new BasicNameValuePair("password", param2));
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("email", param1));
+        parameters.add(new BasicNameValuePair("password", param2));
         try {
-            patch.setEntity(new UrlEncodedFormEntity(urlParameters));
+            patch.setEntity(new UrlEncodedFormEntity(parameters));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -78,17 +77,16 @@ public class HttpFacade {
 
     public  Response delete(String url) {
         System.out.print("Delete request:");
-        HttpDelete delete = new HttpDelete(url);
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            CloseableHttpResponse response = httpClient.execute(delete);{
-                status = response.getStatusLine().getStatusCode();
-                HttpEntity entity = response.getEntity();
-                body = EntityUtils.toString(entity);
-            }
+        HttpDelete request = new HttpDelete(url);
+        try(CloseableHttpResponse response = httpClient.execute(request)) {
+            status = response.getStatusLine().getStatusCode();
+            System.out.println("Status " + status);
+            HttpEntity entity = response.getEntity();
+            body = EntityUtils.toString(entity);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        System.out.println( "Status " + status);
+        System.out.println("Status " + status);
         return new Response(status,body);
     }
 
@@ -106,8 +104,8 @@ public class HttpFacade {
             e.printStackTrace();
         }
         System.out.println("Status " + status);
+        System.out.println(body);
         return new Response(statusCode, body);
     }
-
 }
 
