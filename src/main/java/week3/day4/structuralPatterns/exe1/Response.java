@@ -12,6 +12,7 @@ public class Response {
     public Response(int status, String body) {
         this.status = status;
         this.body = body;
+
     }
 
 }
